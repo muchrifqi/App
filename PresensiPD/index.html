@@ -73,81 +73,62 @@
       </button>
     </div>
 
-    <script>
-      let isScanning = true;
-
-      // Fungsi untuk memainkan bunyi bip
-      function playBeep() {
-        const audio = new Audio('bip-06.mp3'); // File audio di folder yang sama
-        audio.play().catch(err => console.error('Gagal memainkan audio:', err));
+   <script>
+  async function sendDataToGoogleAppsScript(studentId) {
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbxtxsPGZQ1-6OlEZQd-5m_isb10SueJHxaB9c4WMGHHhk0MgbzltQzszqpFHH07qEHY/exec'; // Ganti dengan URL Apps Script Anda
+    try {
+      const response = await fetch(scriptUrl, {
+        method: 'POST',
+        body: JSON.stringify({ studentId: studentId }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
+      const result = await response.text();
+      return JSON.parse(result);
+    } catch (error) {
+      console.error('Error:', error);
+      return { status: 'error', message: 'Terjadi kesalahan saat mengirim data.' };
+    }
+  }
 
-      // Fungsi untuk mengirim data ke Google Apps Script
-      async function sendDataToGoogleAppsScript(studentId) {
-        const scriptUrl = 'https://script.google.com/macros/s/AKfycbyvf_RoFlHkQmNIwlmDUgcpmnNn2oRWUa_aqZGJ2QXYVL_YYc1YWtcXws3_uaBmG0GD/exec'; // Ganti dengan URL Apps Script
-        const response = await fetch(scriptUrl, {
-          method: 'POST',
-          body: JSON.stringify({ studentId: studentId }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
+  function onScanSuccess(content) {
+    if (!isScanning) return;
+
+    isScanning = false;
+    document.getElementById('result').innerText = 'Memproses...';
+
+    // Kirim data ke Google Apps Script
+    sendDataToGoogleAppsScript(content)
+      .then((result) => {
+        // Mainkan bunyi bip
+        playBeep();
+
+        // Tampilkan notifikasi SweetAlert2
+        Swal.fire({
+          title: result.status === 'success' ? 'Berhasil!' : 'Error',
+          text: result.message,
+          icon: result.status === 'success' ? 'success' : 'error',
+          confirmButtonText: 'OK',
+        }).then(() => {
+          // Tampilkan tombol untuk memulai ulang pemindaian
+          document.getElementById('start-button').style.display = 'block';
         });
-        const result = await response.text();
-        return JSON.parse(result);
-      }
 
-      function onScanSuccess(content) {
-        if (!isScanning) return;
+        // Tampilkan pesan di result
+        document.getElementById('result').innerText = result.message;
 
-        isScanning = false;
-        document.getElementById('result').innerText = 'Memproses...';
-
-        // Kirim data ke Google Apps Script
-        sendDataToGoogleAppsScript(content)
-          .then((result) => {
-            // Mainkan bunyi bip
-            playBeep();
-
-            // Tampilkan notifikasi SweetAlert2
-            Swal.fire({
-              title: result.status === 'success' ? 'Berhasil!' : 'Error',
-              text: result.message,
-              icon: result.status === 'success' ? 'success' : 'error',
-              confirmButtonText: 'OK',
-            }).then(() => {
-              // Tampilkan tombol untuk memulai ulang pemindaian
-              document.getElementById('start-button').style.display = 'block';
-            });
-
-            // Tampilkan pesan di result
-            document.getElementById('result').innerText = result.message;
-
-            // Hentikan pemindaian
-            html5QrCode.stop();
-          })
-          .catch((err) => {
-            console.error('Error:', err);
-            document.getElementById('result').innerText = 'Terjadi kesalahan saat mengirim data.';
-          });
-      }
-
-      function startScan() {
-        isScanning = true;
-        document.getElementById('start-button').style.display = 'none';
-        html5QrCode.start(
-          { facingMode: "environment" },
-          { fps: 10, qrbox: 350 }, // Sesuaikan ukuran frame
-          onScanSuccess
-        ).catch(err => {
-          document.getElementById('result').innerText = 'Error: ' + err;
-        });
-      }
-
-      const html5QrCode = new Html5Qrcode("qr-reader");
-      const config = { fps: 10, qrbox: 350 }; // Sesuaikan ukuran frame
-
-      // Mulai pemindaian pertama kali
-      startScan();
-    </script>
+        // Hentikan pemindaian
+        html5QrCode.stop();
+      })
+      .catch((err) => {
+        console.error('Error:', err);
+        document.getElementById('result').innerText = 'Terjadi kesalahan saat mengirim data.';
+      });
+  }
+</script>
   </body>
 </html>
