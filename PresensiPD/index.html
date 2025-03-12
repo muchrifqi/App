@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Aplikasi Kehadiran Siswa</title>
+    <title>Presensi Peserta Didik</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -62,7 +62,7 @@
   </head>
   <body>
     <div class="container">
-      <h1>Aplikasi Kehadiran Siswa</h1>
+      <h1>Presensi Peserta Didik</h1>
       <div id="scanner">
         <p>Arahkan kamera ke QR code di kartu siswa.</p>
         <div id="qr-reader" style="width: 100%;"></div>
@@ -84,7 +84,7 @@
 
       // Fungsi untuk mengirim data ke Google Apps Script
       async function sendDataToGoogleAppsScript(studentId) {
-        const scriptUrl = 'https://script.google.com/macros/s/...'; // Ganti dengan URL Apps Script Anda
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbyvf_RoFlHkQmNIwlmDUgcpmnNn2oRWUa_aqZGJ2QXYVL_YYc1YWtcXws3_uaBmG0GD/exec'; // Ganti dengan URL Apps Script
         const response = await fetch(scriptUrl, {
           method: 'POST',
           body: JSON.stringify({ studentId: studentId }),
