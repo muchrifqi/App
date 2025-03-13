@@ -27,7 +27,7 @@
       }
       h1 {
         color: #333;
-        font-size: 3rem; /* Diperbesar */
+        font-size: 1.5rem; /* Diperbesar */
         margin-bottom: 20px;
 
       }
@@ -42,7 +42,7 @@
       }
       #result {
         margin-top: 20px;
-        font-size: 2rem; /* Diperbesar */
+        font-size: 1rem; /* Diperbesar */
         color: #333;
       }
       .popup {
@@ -51,17 +51,17 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background-color: #0048ff;
+        background-color: #343434;
         color: white;
         padding: 20px;
         border-radius: 25px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         z-index: 1000;
         text-align: center;
-        font-size: 3rem; /* Diperbesar */
+        font-size: 1.5rem; /* Diperbesar */
       }
       p {
-        font-size: 2rem;
+        font-size: 1rem;
 
       }
       .popup button {
@@ -72,7 +72,7 @@
         border-radius: 20px;
         cursor: pointer;
         margin-top: 10px;
-        font-size: 2rem; /* Diperbesar */
+        font-size: 1rem; /* Diperbesar */
       }
       #start-button {
         background-color: #338f67;
@@ -81,7 +81,7 @@
         padding: 15px 30px;
         border-radius: 5px;
         cursor: pointer;
-        font-size: 3rem; /* Diperbesar */
+        font-size: 1.5rem; /* Diperbesar */
         margin-top: 20px;
         width: 100%;
       }
@@ -90,7 +90,7 @@
       }
       @media (max-width: 400px) {
         h1 {
-          font-size: 3rem; /* Diperbesar untuk HP */
+          font-size: 1.5rem; /* Diperbesar untuk HP */
         }
         .container {
           padding: 15px;
@@ -98,7 +98,36 @@
         .popup {
           width: 90%;
           padding: 15px;
-          font-size: 2rem; /* Diperbesar untuk HP */
+          font-size: 1rem; /* Diperbesar untuk HP */
+        }
+      }
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 2rem; /* Ukuran font lebih kecil untuk mobile */
+        }
+
+        .container {
+          padding: 10px; /* Padding lebih kecil */
+          border-radius: 15px; /* Border radius lebih kecil */
+        }
+
+        #qr-reader {
+          width: 100%; /* Lebar penuh */
+        }
+
+        #start-button {
+          font-size: 1.5rem; /* Ukuran font tombol lebih kecil */
+          padding: 10px 20px; /* Padding lebih kecil */
+        }
+
+        .popup {
+          width: 90%; /* Lebar popup lebih kecil */
+          font-size: 1.5rem; /* Ukuran font popup lebih kecil */
+          padding: 15px; /* Padding lebih kecil */
+        }
+
+        p {
+          font-size: 1.2rem; /* Ukuran font paragraf lebih kecil */
         }
       }
     </style>
@@ -126,51 +155,57 @@
       }
 
       async function onScanSuccess(content) {
-          if (!isScanning) return;
-        
-          isScanning = false;
-          document.getElementById('result').innerText = 'Memproses...';
-        
-          try {
-            const response = await fetch(webAppUrl, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-              body: 'studentId=' + encodeURIComponent(content),
+        if (!isScanning) return;
+
+        isScanning = false;
+        document.getElementById('result').innerText = 'Memproses...';
+
+        try {
+          const response = await fetch(webAppUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'studentId=' + encodeURIComponent(content),
+          });
+          const result = await response.json();
+
+          if (result.status === 'success') {
+            playBeep();
+            Swal.fire({
+              title: 'Berhasil!',
+              text: result.message,
+              icon: 'success',
+              confirmButtonText: 'Ok',
+              timer: 3000, // Notifikasi akan hilang setelah 3 detik
+              timerProgressBar: true, // Tampilkan progress bar
+            }).then(() => {
+              document.getElementById('start-button').style.display = 'block';
             });
-            const result = await response.json();
-        
-            if (result.status === 'success') {
-              playBeep();
-              Swal.fire({
-                title: 'Berhasil!',
-                text: result.message,
-                icon: 'success',
-                confirmButtonText: 'Ok'
-              }).then(() => {
-                document.getElementById('start-button').style.display = 'block';
-              });
-              document.getElementById('result').innerText = result.message;
-            } else {
-              Swal.fire({
-                title: 'Error!',
-                text: result.message,
-                icon: 'error',
-                confirmButtonText: 'Ok'
-              });
-            }
-          } catch (error) {
+            document.getElementById('result').innerText = result.message;
+          } else {
             Swal.fire({
               title: 'Error!',
-              text: 'Terjadi kesalahan saat memproses presensi.',
+              text: result.message,
               icon: 'error',
-              confirmButtonText: 'Ok'
+              confirmButtonText: 'Ok',
+              timer: 3000,
+              timerProgressBar: true,
             });
-          } finally {
-            html5QrCode.stop();
           }
+        } catch (error) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Terjadi kesalahan saat memproses presensi.',
+            icon: 'error',
+            confirmButtonText: 'Ok',
+            timer: 3000,
+            timerProgressBar: true,
+          });
+        } finally {
+          html5QrCode.stop();
         }
+      }
 
       function startScan() {
         isScanning = true;
