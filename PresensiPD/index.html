@@ -86,7 +86,7 @@ async function sendDataToGoogleAppsScript(studentId) {
   try {
     const response = await fetch(scriptUrl, {
       method: 'POST',
-      body: JSON.stringify({ studentId: studentId }),
+      body: JSON.stringify({ studentId: '12345' }),
       headers: {
         'Content-Type': 'application/json',
       },
