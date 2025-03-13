@@ -77,6 +77,34 @@
     <audio id="beep-sound" src="https://assets.mixkit.co/active_storage/sfx/2127/2127-preview.mp3"></audio>
 
     <script>
+      let html5QrCode;
+      let isScanning = false;
+
+      // Fungsi untuk memulai pemindaian
+      function startScan() {
+        // Inisialisasi pemindai QR code
+        html5QrCode = new Html5Qrcode("qr-reader");
+
+        // Mulai pemindaian
+        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+          onScanSuccess(decodedText); // Panggil fungsi onScanSuccess
+        };
+
+        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+        // Mulai kamera
+        html5QrCode
+          .start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
+          .then(() => {
+            isScanning = true;
+            document.getElementById('start-button').style.display = 'none'; // Sembunyikan tombol mulai
+          })
+          .catch((err) => {
+            console.error("Gagal memulai kamera:", err);
+            alert("Gagal memulai kamera. Pastikan Anda mengizinkan akses kamera.");
+          });
+      }
+
       // Fungsi untuk memainkan suara bip
       function playBeep() {
         const beepSound = document.getElementById('beep-sound');
@@ -135,13 +163,20 @@
             document.getElementById('result').innerText = result.message;
 
             // Hentikan pemindaian
-            html5QrCode.stop();
+            if (html5QrCode) {
+              html5QrCode.stop();
+            }
           })
           .catch((err) => {
             console.error('Error:', err);
             document.getElementById('result').innerText = 'Terjadi kesalahan saat mengirim data.';
           });
       }
+
+      // Mulai pemindaian saat halaman dimuat
+      document.addEventListener('DOMContentLoaded', () => {
+        startScan();
+      });
     </script>
   </body>
 </html>
