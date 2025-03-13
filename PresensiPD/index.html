@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Presensi Peserta Didik</title>
+    <title>Aplikasi Presensi Siswa</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
       body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f9;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #102243;
         margin: 0;
         padding: 0;
         display: flex;
@@ -19,16 +19,17 @@
       .container {
         background-color: #ffffff;
         padding: 20px;
-        border-radius: 15px;
+        border-radius: 25px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        max-width: 500px;
+        max-width: 900px;
         width: 90%;
         text-align: center;
       }
       h1 {
         color: #333;
-        font-size: 24px;
+        font-size: 3rem; /* Diperbesar */
         margin-bottom: 20px;
+
       }
       #scanner {
         width: 100%;
@@ -41,28 +42,70 @@
       }
       #result {
         margin-top: 20px;
-        font-size: 18px;
+        font-size: 2rem; /* Diperbesar */
         color: #333;
       }
+      .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #0048ff;
+        color: white;
+        padding: 20px;
+        border-radius: 25px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        text-align: center;
+        font-size: 3rem; /* Diperbesar */
+      }
+      p {
+        font-size: 2rem;
+
+      }
+      .popup button {
+        background-color: #fff;
+        color: #006539;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        margin-top: 10px;
+        font-size: 2rem; /* Diperbesar */
+      }
       #start-button {
-        background-color: #4caf50;
+        background-color: #338f67;
         color: white;
         border: none;
         padding: 15px 30px;
         border-radius: 5px;
         cursor: pointer;
-        font-size: 16px;
+        font-size: 3rem; /* Diperbesar */
         margin-top: 20px;
         width: 100%;
       }
       #start-button:hover {
-        background-color: #45a049;
+        background-color: #0d422b;
+      }
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 3rem; /* Diperbesar untuk HP */
+        }
+        .container {
+          padding: 15px;
+        }
+        .popup {
+          width: 90%;
+          padding: 15px;
+          font-size: 2rem; /* Diperbesar untuk HP */
+        }
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>Presensi Peserta Didik</h1>
+      <h1>Aplikasi Presensi Siswa</h1>
       <div id="scanner">
         <p>Arahkan kamera ke QR code di kartu siswa.</p>
         <div id="qr-reader" style="width: 100%;"></div>
@@ -73,109 +116,70 @@
       </button>
     </div>
 
-    <!-- Tambahkan elemen audio untuk suara bip -->
-    <audio id="beep-sound" src="https://assets.mixkit.co/active_storage/sfx/2127/2127-preview.mp3"></audio>
-
     <script>
-      let html5QrCode;
-      let isScanning = false;
+      let isScanning = true;
+      const webAppUrl = 'https://script.google.com/macros/s/AKfycby4A17odLO9L3GZnkdGpoupX8nOzp8qTwE2EFjuYeH4q86nZdkRhRaNVikspuN5LDrX/exec'; // Ganti dengan URL Web App Anda
 
-      // Fungsi untuk memulai pemindaian
-      function startScan() {
-        // Inisialisasi pemindai QR code
-        html5QrCode = new Html5Qrcode("qr-reader");
-
-        // Mulai pemindaian
-        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-          onScanSuccess(decodedText); // Panggil fungsi onScanSuccess
-        };
-
-        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-
-        // Mulai kamera
-        html5QrCode
-          .start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
-          .then(() => {
-            isScanning = true;
-            document.getElementById('start-button').style.display = 'none'; // Sembunyikan tombol mulai
-          })
-          .catch((err) => {
-            console.error("Gagal memulai kamera:", err);
-            alert("Gagal memulai kamera. Pastikan Anda mengizinkan akses kamera.");
-          });
-      }
-
-      // Fungsi untuk memainkan suara bip
       function playBeep() {
-        const beepSound = document.getElementById('beep-sound');
-        if (beepSound) {
-          beepSound.play(); // Memainkan suara bip
-        }
+        const audio = new Audio('https://drive.google.com/file/d/1yg97S3NCIm-nomRGa2cx5jN8_4v5aKcC/view?usp=sharing'); // Ganti dengan URL file bip
+        audio.play();
       }
 
-      // Fungsi untuk mengirim data ke Google Apps Script
-      function sendDataToGoogleAppsScript(studentId) {
-  const scriptUrl = 'https://script.google.com/macros/s/AKfycbxtxsPGZQ1-6OlEZQd-5m_isb10SueJHxaB9c4WMGHHhk0MgbzltQzszqpFHH07qEHY/exec'; // Ganti dengan URL Apps Script Anda
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', scriptUrl, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        resolve(JSON.parse(xhr.responseText));
-      } else {
-        reject(new Error(`HTTP error! Status: ${xhr.status}`));
-      }
-    };
-    xhr.onerror = () => {
-      reject(new Error('Terjadi kesalahan saat mengirim data.'));
-    };
-    xhr.send(JSON.stringify({ studentId: studentId }));
-  });
-}
-
-      // Fungsi yang dipanggil ketika QR code berhasil dipindai
-      function onScanSuccess(content) {
+      async function onScanSuccess(content) {
         if (!isScanning) return;
 
         isScanning = false;
         document.getElementById('result').innerText = 'Memproses...';
 
-        // Kirim data ke Google Apps Script
-        sendDataToGoogleAppsScript(content)
-          .then((result) => {
-            // Mainkan bunyi bip
-            playBeep();
+        try {
+          const response = await fetch(webAppUrl + '?studentId=' + encodeURIComponent(content));
+          const result = await response.json();
 
-            // Tampilkan notifikasi SweetAlert2
+          if (result.status === 'success') {
+            playBeep();
             Swal.fire({
-              title: result.status === 'success' ? 'Berhasil!' : 'Error',
+              title: 'Berhasil!',
               text: result.message,
-              icon: result.status === 'success' ? 'success' : 'error',
-              confirmButtonText: 'OK',
+              icon: 'success',
+              confirmButtonText: 'Ok'
             }).then(() => {
-              // Tampilkan tombol untuk memulai ulang pemindaian
               document.getElementById('start-button').style.display = 'block';
             });
-
-            // Tampilkan pesan di result
             document.getElementById('result').innerText = result.message;
-
-            // Hentikan pemindaian
-            if (html5QrCode) {
-              html5QrCode.stop();
-            }
-          })
-          .catch((err) => {
-            console.error('Error:', err);
-            document.getElementById('result').innerText = 'Terjadi kesalahan saat mengirim data.';
+          } else {
+            Swal.fire({
+              title: 'Error!',
+              text: result.message,
+              icon: 'error',
+              confirmButtonText: 'Ok'
+            });
+          }
+        } catch (error) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Terjadi kesalahan saat memproses presensi.',
+            icon: 'error',
+            confirmButtonText: 'Ok'
           });
+        } finally {
+          html5QrCode.stop();
+        }
       }
 
-      // Mulai pemindaian saat halaman dimuat
-      document.addEventListener('DOMContentLoaded', () => {
-        startScan();
-      });
+      function startScan() {
+        isScanning = true;
+        document.getElementById('start-button').style.display = 'none';
+        html5QrCode.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: 450 },
+          onScanSuccess
+        ).catch(err => {
+          document.getElementById('result').innerText = 'Error: ' + err;
+        });
+      }
+
+      const html5QrCode = new Html5Qrcode("qr-reader");
+      startScan();
     </script>
   </body>
 </html>
