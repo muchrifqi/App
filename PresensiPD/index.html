@@ -21,7 +21,7 @@
         padding: 20px;
         border-radius: 25px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        max-width: 900px;
+        max-width: 400px;
         width: 90%;
         text-align: center;
       }
@@ -88,7 +88,7 @@
       #start-button:hover {
         background-color: #0d422b;
       }
-      @media (max-width: 600px) {
+      @media (max-width: 400px) {
         h1 {
           font-size: 3rem; /* Diperbesar untuk HP */
         }
@@ -171,7 +171,7 @@
         document.getElementById('start-button').style.display = 'none';
         html5QrCode.start(
           { facingMode: "environment" },
-          { fps: 10, qrbox: 450 },
+          { fps: 10, qrbox: 200 },
           onScanSuccess
         ).catch(err => {
           document.getElementById('result').innerText = 'Error: ' + err;
