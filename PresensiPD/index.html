@@ -82,11 +82,11 @@ function playBeep() {
 }
 
 async function sendDataToGoogleAppsScript(studentId) {
-  const scriptUrl = 'https://script.google.com/macros/s/AKfycbxtxsPGZQ1-6OlEZQd-5m_isb10SueJHxaB9c4WMGHHhk0MgbzltQzszqpFHH07qEHY/exec'; // Ganti dengan URL Apps Script Anda
+  const scriptUrl = 'https://script.google.com/macros/s/AKfycbyQUbKxkaqAh_nYTmuoev8TJStrSgTuQB1P3HvB_h2jyqTBpt7HPhdVw7AuWi5Sz0Wq/exec'; // Ganti dengan URL Apps Script Anda
   try {
     const response = await fetch(scriptUrl, {
       method: 'POST',
-      body: JSON.stringify({ studentId: '12345' }),
+      body: JSON.stringify({ studentId: studentId }),
       headers: {
         'Content-Type': 'application/json',
       },
