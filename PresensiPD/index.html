@@ -126,45 +126,51 @@
       }
 
       async function onScanSuccess(content) {
-        if (!isScanning) return;
-
-        isScanning = false;
-        document.getElementById('result').innerText = 'Memproses...';
-
-        try {
-          const response = await fetch(webAppUrl + '?studentId=' + encodeURIComponent(content));
-          const result = await response.json();
-
-          if (result.status === 'success') {
-            playBeep();
-            Swal.fire({
-              title: 'Berhasil!',
-              text: result.message,
-              icon: 'success',
-              confirmButtonText: 'Ok'
-            }).then(() => {
-              document.getElementById('start-button').style.display = 'block';
+          if (!isScanning) return;
+        
+          isScanning = false;
+          document.getElementById('result').innerText = 'Memproses...';
+        
+          try {
+            const response = await fetch(webAppUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: 'studentId=' + encodeURIComponent(content),
             });
-            document.getElementById('result').innerText = result.message;
-          } else {
+            const result = await response.json();
+        
+            if (result.status === 'success') {
+              playBeep();
+              Swal.fire({
+                title: 'Berhasil!',
+                text: result.message,
+                icon: 'success',
+                confirmButtonText: 'Ok'
+              }).then(() => {
+                document.getElementById('start-button').style.display = 'block';
+              });
+              document.getElementById('result').innerText = result.message;
+            } else {
+              Swal.fire({
+                title: 'Error!',
+                text: result.message,
+                icon: 'error',
+                confirmButtonText: 'Ok'
+              });
+            }
+          } catch (error) {
             Swal.fire({
               title: 'Error!',
-              text: result.message,
+              text: 'Terjadi kesalahan saat memproses presensi.',
               icon: 'error',
               confirmButtonText: 'Ok'
             });
+          } finally {
+            html5QrCode.stop();
           }
-        } catch (error) {
-          Swal.fire({
-            title: 'Error!',
-            text: 'Terjadi kesalahan saat memproses presensi.',
-            icon: 'error',
-            confirmButtonText: 'Ok'
-          });
-        } finally {
-          html5QrCode.stop();
         }
-      }
 
       function startScan() {
         isScanning = true;
