@@ -32,7 +32,7 @@
 
       header h1 {
         margin: 0;
-        font-size: 2.5rem;
+        font-size: 2rem;
       }
 
       /* Container untuk Konten Utama */
@@ -41,7 +41,7 @@
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        max-width: 900px;
+        max-width: 400px;
         width: 90%;
         text-align: center;
         margin: 20px 0;
@@ -50,7 +50,7 @@
       /* Judul dan Teks */
       h1 {
         color: #172e69; /* Warna utama */
-        font-size: 2.5rem;
+        font-size: 2rem;
         margin-bottom: 20px;
       }
 
@@ -109,17 +109,32 @@
         margin: 0;
         font-size: 1rem;
       }
+      #start-button {
+        background-color: #2c4a8a; /* Warna sekunder */
+        color: #ffffff; /* Warna teks putih */
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 20px;
+    }
+
+    #start-button:hover {
+        background-color: #4a6bac; /* Warna aksen saat dihover */
+    }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>Aplikasi Presensi Peserta Didik</h1>
+      <h1>Aplikasi Presensi Siswa</h1>
       <div id="scanner">
         <p>Arahkan kamera ke QR code di kartu siswa.</p>
         <div id="qr-reader" style="width: 100%;"></div>
       </div>
       <div id="result"></div>
-      <button id="start-button" style="display: none;" onclick="startScan()">
+      <button id="start-button" style="display: none;" onclick="startScan()" class="button">
         Mulai Pemindaian Ulang
       </button>
     </div>
@@ -168,7 +183,7 @@
               text: result.message,
               icon: 'error',
               confirmButtonText: 'Ok',
-              timer: 3000,
+              timer: 2000,
               timerProgressBar: true,
             });
           }
@@ -178,7 +193,7 @@
             text: 'Terjadi kesalahan saat memproses presensi.',
             icon: 'error',
             confirmButtonText: 'Ok',
-            timer: 3000,
+            timer: 2000,
             timerProgressBar: true,
           });
         } finally {
