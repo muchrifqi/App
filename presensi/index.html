@@ -1,124 +1,228 @@
-<style>
-  /* Global Styles */
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f4f8; /* Warna background */
-    color: #333333; /* Warna teks utama */
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    flex-direction: column;
-  }
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Aplikasi Presensi Peserta Didik</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      /* Global Styles */
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f4f8; /* Warna background */
+        color: #333333; /* Warna teks utama */
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        flex-direction: column;
+      }
 
-  /* Header */
-  header {
-    background-color: #172e69; /* Warna utama */
-    color: #ffffff; /* Warna teks putih */
-    padding: 20px 0;
-    text-align: center;
-    width: 100%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
+      /* Header */
+      header {
+        background-color: #172e69; /* Warna utama */
+        color: #ffffff; /* Warna teks putih */
+        padding: 20px 0;
+        text-align: center;
+        width: 100%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
 
-  header h1 {
-    margin: 0;
-    font-size: 1.5rem;
-  }
+      header h1 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
 
-  /* Container untuk Konten Utama */
-  .container {
-    text-align: center;
-    background-color: #ffffff; /* Warna background container */
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 350px;
-    width: 90%;
-    text-align: center;
-    margin: 20px 0;
-  }
+      /* Container untuk Konten Utama */
+      .container {
+        text-align: center;
+        background-color: #ffffff; /* Warna background container */
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 350px;
+        width: 90%;
+        text-align: center;
+        margin: 20px 0;
+      }
 
-  /* Judul dan Teks */
-  h1 {
-    color: #172e69; /* Warna utama */
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-  }
+      /* Judul dan Teks */
+      h1 {
+        color: #172e69; /* Warna utama */
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+      }
 
-  p {
-    color: #555555; /* Warna teks sekunder */
-    font-size: 1rem;
-  }
+      p {
+        color: #555555; /* Warna teks sekunder */
+        font-size: 1rem;
+      }
 
-  /* Scanner Area */
-  #scanner {
-    height: 800px;
-    width: 100%;
-    margin: 20px 0;
-  }
+      /* Scanner Area */
+      #scanner {
+        height: 800px;
+        width: 100%;
+        margin: 20px 0;
+      }
 
-  video {
-    width: 100%;
-    border-radius: 15px;
-    border: 2px solid #ddd;
-  }
+      video {
+        width: 100%;
+        border-radius: 15px;
+        border: 2px solid #ddd;
+      }
 
-  /* Tombol */
-  .button {
-    background-color: #2c4a8a; /* Warna sekunder */
-    color: #ffffff; /* Warna teks putih */
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 20px;
-  }
+      /* Tombol */
+      .button {
+        background-color: #2c4a8a; /* Warna sekunder */
+        color: #ffffff; /* Warna teks putih */
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 20px;
+      }
 
-  .button:hover {
-    background-color: #4a6bac; /* Warna aksen saat dihover */
-  }
+      .button:hover {
+        background-color: #4a6bac; /* Warna aksen saat dihover */
+      }
 
-  /* Hasil Scan */
-  #result {
-    margin-top: 20px;
-    font-size: 1.2rem;
-    color: #333333; /* Warna teks utama */
-  }
+      /* Hasil Scan */
+      #result {
+        margin-top: 20px;
+        font-size: 1.2rem;
+        color: #333333; /* Warna teks utama */
+      }
 
-  footer {
-    background-color: #172e69; /* Warna utama */
-    color: #ffffff; /* Warna teks putih */
-    text-align: center;
-    padding: 10px 0;
-    width: 100%;
-    font-size: 0.5rem;
-    margin-top: auto;
-  }
+      footer {
+        background-color: #172e69; /* Warna utama */
+        color: #ffffff; /* Warna teks putih */
+        text-align: center;
+        padding: 10px 0;
+        width: 100%;
+        font-size: 0.5rem;
+        margin-top: auto;
+      }
 
-  footer p {
-    margin: 0;
-    font-size: 1rem;
-  }
-  #start-button {
-    display: none;
-    margin: 0 auto; /* Rata tengah secara horizontal */
-    background-color: #2c4a8a;
-    color: #ffffff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 15px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 20px;
-}
+      footer p {
+        margin: 0;
+        font-size: 1rem;
+      }
+      #start-button {
+        display: none;
+        margin: 0 auto; /* Rata tengah secara horizontal */
+        background-color: #2c4a8a;
+        color: #ffffff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 15px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 20px;
+    }
 
-#start-button:hover {
-    background-color: #4a6bac; /* Warna aksen saat dihover */
-}
-</style>
+    #start-button:hover {
+        background-color: #4a6bac; /* Warna aksen saat dihover */
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Aplikasi Presensi Siswa</h1>
+      <div id="scanner">
+        <p>Arahkan kamera ke QR code di kartu siswa.</p>
+        <div id="qr-reader" style="width: 100%;"></div>
+      </div>
+      <div id="result"></div>
+      <button id="start-button" style="display: none;" onclick="startScan()" class="button">
+        Mulai Pemindaian Ulang
+      </button>
+    </div>
+
+    <script>
+      let isScanning = true;
+      const webAppUrl = 'https://script.google.com/macros/s/AKfycbwyYf2D42MHyKmAzywf6R_zWibg1B3Sius0Lcndfx25hd53ejxRgkerJrUvnJ6ZNZfb/exec'; // Ganti dengan URL Web App Anda
+
+      function playBeep() {
+        const audio = new Audio('https://drive.google.com/file/d/1yg97S3NCIm-nomRGa2cx5jN8_4v5aKcC/view?usp=sharing'); // Ganti dengan URL file bip
+        audio.play();
+      }
+
+      async function onScanSuccess(content) {
+        if (!isScanning) return;
+
+        isScanning = false;
+        document.getElementById('result').innerText = 'Memproses...';
+
+        try {
+          const response = await fetch(webAppUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'studentId=' + encodeURIComponent(content),
+          });
+          const result = await response.json();
+
+          if (result.status === 'success') {
+            playBeep();
+            Swal.fire({
+              title: 'Berhasil!',
+              text: result.message,
+              icon: 'success',
+              confirmButtonText: 'Ok',
+              timer: 3000, // Notifikasi akan hilang setelah 3 detik
+              timerProgressBar: true, // Tampilkan progress bar
+            }).then(() => {
+              document.getElementById('start-button').style.display = 'block';
+            });
+            document.getElementById('result').innerText = result.message;
+          } else {
+            Swal.fire({
+              title: 'Error!',
+              text: result.message,
+              icon: 'error',
+              confirmButtonText: 'Ok',
+              timer: 2000,
+              timerProgressBar: true,
+            });
+          }
+        } catch (error) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Terjadi kesalahan saat memproses presensi.',
+            icon: 'error',
+            confirmButtonText: 'Ok',
+            timer: 2000,
+            timerProgressBar: true,
+          });
+        } finally {
+          html5QrCode.stop();
+        }
+      }
+
+      function startScan() {
+        isScanning = true;
+        document.getElementById('start-button').style.display = 'none';
+        html5QrCode.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: 250 },
+          onScanSuccess
+        ).catch(err => {
+          document.getElementById('result').innerText = 'Error: ' + err;
+        });
+      }
+
+      const html5QrCode = new Html5Qrcode("qr-reader");
+      startScan();
+    </script>
+  </body>
+        <!-- Footer -->
+        <footer>
+          <p style="color: white;">&copy; 2025 Presensi Peserta Didik Shahaba.</p>
+        </footer>
+</html>
