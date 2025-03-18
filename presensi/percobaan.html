@@ -1,85 +1,122 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Aplikasi Presensi Peserta Didik</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Presensi Peserta Didik</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
       /* Global Styles */
+      :root {
+        --primary-color: #172e69; /* Warna biru shahaba sd */
+        --secondary-color: #2b2b2b;
+        --accent-color: #e15f0e;
+        --background-gradient: linear-gradient(-45deg, #2d58c4, #172e69); /* Gradien biru */
+        --text-color: white; /* Warna teks putih */
+        --error-color: #870900; /* Warna merah untuk pesan error */
+        --success-color: #006c04; /* Warna hijau untuk pesan sukses */
+        --button-hover-color: rgba(6, 158, 54, 0.758); /* Warna hijau saat hover */
+      }
+
       body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f0f4f8; /* Warna background */
-        color: #333333; /* Warna teks utama */
-        margin: 0;
-        padding: 0;
+        background: var(--background-gradient);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
+        color: var(--text-color);
         display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
         flex-direction: column;
-      }
-
-      /* Header */
-      header {
-        background-color: #172e69; /* Warna utama */
-        color: #ffffff; /* Warna teks putih */
-        padding: 20px 0;
-        text-align: center;
-        width: 100%;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      header h1 {
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
         margin: 0;
-        font-size: 1.5rem;
+        padding: 20px;
       }
 
-      /* Container untuk Konten Utama */
-      .container {
+      @keyframes gradientBG {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      .curve {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        background: white;
+        border-radius: 0 0 50% 50%;
+        transform: scaleX(1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .curve h1 {
+        color: var(--primary-color);
+        font-size: 2rem;
+        margin: 0;
+        font-weight: bold;
+      }
+
+      .curve h2 {
+        color: var(--secondary-color);
+        font-size: 1rem;
+        margin: 0;
+        font-weight: normal;
         text-align: center;
-        background-color: #ffffff; /* Warna background container */
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        max-width: 350px;
+      }
+
+      .container {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 1rem;
+        border-radius: 25px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        max-width: 800px;
         width: 90%;
         text-align: center;
-        margin: 20px 0;
+        animation: fadeIn 1s ease-in-out;
+        margin-top: 10px;
       }
 
-      /* Judul dan Teks */
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
       h1 {
-        color: #172e69; /* Warna utama */
         font-size: 1.5rem;
-        margin-bottom: 20px;
+        margin-bottom: 1rem;
       }
 
       p {
-        color: #555555; /* Warna teks sekunder */
+        color: var(--text-color);
         font-size: 1rem;
       }
 
-      /* Scanner Area */
       #scanner {
-        height: 800px;
         width: 100%;
         margin: 20px 0;
       }
 
       video {
         width: 100%;
-        border-radius: 15px;
-        border: 2px solid #ddd;
+        border-radius: 10px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
       }
 
-      /* Tombol */
       .button {
-        background-color: #2c4a8a; /* Warna sekunder */
-        color: #ffffff; /* Warna teks putih */
+        background-color: var(--accent-color);
+        color: var(--text-color);
         border: none;
         padding: 10px 20px;
-        border-radius: 5px;
+        border-radius: 15px;
         font-size: 1rem;
         cursor: pointer;
         transition: background-color 0.3s ease;
@@ -87,50 +124,55 @@
       }
 
       .button:hover {
-        background-color: #4a6bac; /* Warna aksen saat dihover */
+        background-color: var(--button-hover-color);
       }
 
-      /* Hasil Scan */
       #result {
         margin-top: 20px;
         font-size: 1.2rem;
-        color: #333333; /* Warna teks utama */
+        color: var(--text-color);
       }
 
       footer {
-        background-color: #172e69; /* Warna utama */
-        color: #ffffff; /* Warna teks putih */
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
         text-align: center;
         padding: 10px 0;
-        width: 100%;
-        font-size: 0.5rem;
-        margin-top: auto;
+        font-size: 14px;
+        backdrop-filter: blur(5px);
+        z-index: 1000;
       }
 
       footer p {
         margin: 0;
         font-size: 1rem;
       }
-      #start-button {
-        display: none;
-        margin: 0 auto; /* Rata tengah secara horizontal */
-        background-color: #2c4a8a;
-        color: #ffffff;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 15px;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        margin-top: 20px;
-    }
 
-    #start-button:hover {
-        background-color: #4a6bac; /* Warna aksen saat dihover */
-    }
+      @media (max-width: 768px) {
+        .container {
+          padding: 1rem;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        .button-container {
+          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        }
+      }
     </style>
   </head>
   <body>
+    <div class="curve">
+      <h1>Shahaba</h1>
+      <h2>Sistem Pendataan Presensi</h2>
+    </div>
+
     <div class="container">
       <h1>Aplikasi Presensi Siswa</h1>
       <div id="scanner">
@@ -138,10 +180,11 @@
         <div id="qr-reader" style="width: 100%;"></div>
       </div>
       <div id="result"></div>
-      <button id="start-button" style="display: none;" onclick="startScan()" class="button">
-        Mulai Pemindaian Ulang
-      </button>
     </div>
+
+    <footer class="footer">
+      <p>&copy; 2025 Presensi Peserta Didik Shahaba.</p>
+    </footer>
 
     <script>
       let isScanning = true;
@@ -178,7 +221,8 @@
               timer: 3000, // Notifikasi akan hilang setelah 3 detik
               timerProgressBar: true, // Tampilkan progress bar
             }).then(() => {
-              document.getElementById('start-button').style.display = 'block';
+              // Mulai ulang pemindaian setelah SweetAlert ditutup
+              startScan();
             });
             document.getElementById('result').innerText = result.message;
           } else {
@@ -189,6 +233,9 @@
               confirmButtonText: 'Ok',
               timer: 2000,
               timerProgressBar: true,
+            }).then(() => {
+              // Mulai ulang pemindaian setelah SweetAlert ditutup
+              startScan();
             });
           }
         } catch (error) {
@@ -199,6 +246,9 @@
             confirmButtonText: 'Ok',
             timer: 2000,
             timerProgressBar: true,
+          }).then(() => {
+            // Mulai ulang pemindaian setelah SweetAlert ditutup
+            startScan();
           });
         } finally {
           html5QrCode.stop();
@@ -207,7 +257,6 @@
 
       function startScan() {
         isScanning = true;
-        document.getElementById('start-button').style.display = 'none';
         html5QrCode.start(
           { facingMode: "environment" },
           { fps: 10, qrbox: 250 },
@@ -221,8 +270,4 @@
       startScan();
     </script>
   </body>
-        <!-- Footer -->
-        <footer>
-          <p style="color: white;">&copy; 2025 Presensi Peserta Didik Shahaba.</p>
-        </footer>
 </html>
