@@ -59,6 +59,11 @@ async function onScanSuccess(content) {
   }
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  const html5QrCode = new Html5Qrcode("qr-reader");
+  startScan();
+});
+
 function startScan() {
   isScanning = true;
   document.getElementById('start-button').style.display = 'none';
